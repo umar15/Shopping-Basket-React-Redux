@@ -12,8 +12,9 @@ import {
   Typography
 } from "@material-ui/core"
 import DeleteIcon from "@material-ui/icons/Delete"
-
+import { useSelector } from "react-redux"
 import { ProductItem } from "../global"
+import { store, remove } from "../store"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Basket = () => {
   const classes = useStyles({})
-  const products = [] // TODO
+  const products = useSelector((state: ProductItem[]) => state)
 
   return (
     <>
@@ -45,11 +46,11 @@ const Basket = () => {
         Shopping Basket
       </Typography>
       <Typography component="p" variant="body1">
-        You have {products.filter(product => product.added).length} items in your basket
+        You have {products.filter((product) => product.added).length} items in your basket
       </Typography>
       <List className={classes.root}>
         {products
-          .filter(product => product.added)
+          .filter((product) => product.added)
           .map((product: ProductItem) => (
             <React.Fragment key={product.id}>
               <ListItem alignItems="flex-start">
@@ -76,9 +77,7 @@ const Basket = () => {
                   <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() => {
-                      /* Remove from basket */
-                    }}
+                    onClick={() => store.dispatch(remove({ id: product.id }))}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -92,7 +91,7 @@ const Basket = () => {
             &pound;
             {(
               products
-                .filter(product => product.added)
+                .filter((product) => product.added)
                 .reduce((acc, current) => (acc += current.price), 0) / 100
             ).toFixed(2)}
           </Typography>
